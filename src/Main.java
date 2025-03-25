@@ -1,15 +1,55 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        BinarySearch bs = new BinarySearch();
+        ModuloSearch ms = new ModuloSearch();
+        MultiplicationSearch mps = new MultiplicationSearch();
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        int[] array = {2, 1};
+        int target = 100;
+
+        // Binary Search
+        try {
+            BinarySearch.SearchResult binarySearchResult = bs.search(array, target);
+            System.out.println("Binary Search Result:");
+            System.out.println("Index: " + binarySearchResult.getIndex());
+            System.out.println("Execution Time: " + binarySearchResult.getExecutionTimeNanos() + " nanoseconds");
+            System.out.println("Iterations: " + binarySearchResult.getIterations());
+
+            // Compute computational complexity
+            double complexity = bs.calculateComputationalComplexity(array.length);
+            System.out.println("Computational Complexity (log2(n)): " + complexity);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Binary Search Error: " + e.getMessage());
+        }
+
+        // Modulo Search
+        try {
+            ModuloSearch.SearchResult moduloSearchResult = ms.search(array, target);
+            System.out.println("\nModulo Search Result:");
+            System.out.println("Index: " + moduloSearchResult.getIndex());
+            System.out.println("Execution Time: " + moduloSearchResult.getExecutionTimeNanos() + " nanoseconds");
+            System.out.println("Iterations: " + moduloSearchResult.getIterations());
+
+            // Compute computational complexity
+            double complexity = ms.calculateComputationalComplexity(array.length);
+            System.out.println("Computational Complexity (O(n)): " + complexity);
+        } catch (Exception e) {
+            System.out.println("Modulo Search Error: " + e.getMessage());
+        }
+
+        // Multiplication Search
+        try {
+            MultiplicationSearch.SearchResult multiplicationSearchResult = mps.search(array, target);
+            System.out.println("\nMultiplication Search Result:");
+            System.out.println("Index: " + multiplicationSearchResult.getIndex());
+            System.out.println("Execution Time: " + multiplicationSearchResult.getExecutionTimeNanos() + " nanoseconds");
+            System.out.println("Iterations: " + multiplicationSearchResult.getIterations());
+
+            // Compute computational complexity
+            double complexity = mps.calculateComputationalComplexity(array.length);
+            System.out.println("Computational Complexity (O(n)): " + complexity);
+        } catch (Exception e) {
+            System.out.println("Multiplication Search Error: " + e.getMessage());
         }
     }
 }
