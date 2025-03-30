@@ -25,26 +25,42 @@ public class ModuloSearch {
     }
 
     // Tamaño de la tabla hash
-    private static final int TABLE_SIZE = 10;
+    private int tableSize;
 
-    // Tabla hash simple
-    private int[] hashTable = new int[TABLE_SIZE];
+    // Tabla hash
+    private int[] hashTable;
+
+    // Constructor sin argumentos usa tamaño predeterminado
+    public ModuloSearch() {
+        this(100); // Tamaño predeterminado
+    }
+
+    // Constructor con tamaño personalizado
+    public ModuloSearch(int size) {
+        this.tableSize = size;
+        this.hashTable = new int[size];
+        // Inicializar con 0 o -1 para indicar posiciones vacías
+        // Uso -1 para distinguir más fácilmente entre valores insertados y posiciones vacías
+        java.util.Arrays.fill(this.hashTable, -1);
+    }
 
     // Función hash simple
     private int hashFunction(int key) {
-        // Usamos el módulo para distribuir las claves
-        return Math.abs(key % TABLE_SIZE);
+        return Math.abs(key % tableSize);
     }
 
     // Método para insertar
     public void insert(int value) {
         int index = hashFunction(value);
+        int startIndex = index;
 
-        // Manejo de colisiones (método de sondeo lineal simple)
-        while (hashTable[index] != 0) {
-            index = (index + 1) % TABLE_SIZE;
+        while (hashTable[index] != -1 && hashTable[index] != 0) {
+            index = (index + 1) % tableSize;
+            if (index == startIndex) {
+                System.out.println("Tabla hash llena, no se puede insertar: " + value);
+                return;
+            }
         }
-
         hashTable[index] = value;
     }
 
@@ -52,34 +68,45 @@ public class ModuloSearch {
     public SearchResult search(int[] array, int target) {
         // Iniciar temporizador
         long startTime = System.nanoTime();
-
         int iterations = 0;
 
-        for (int i = 0; i < array.length; i++) {
+        // Calcular el índice donde debería estar el valor
+        int index = hashFunction(target);
+        int startIndex = index;
+
+        // Buscar en la tabla hash en lugar del arreglo original
+        while (hashTable[index] != -1) {
             iterations++;
-            if (array[i] == target) {
+
+            if (hashTable[index] == target) {
                 long endTime = System.nanoTime();
-                long executionTime = endTime - startTime;
-                return new SearchResult(i, executionTime, iterations);
+                return new SearchResult(index, endTime - startTime, iterations);
+            }
+
+            // Avanzar al siguiente índice (sondeo lineal)
+            index = (index + 1) % tableSize;
+
+            // Si hemos dado una vuelta completa, el elemento no está en la tabla
+            if (index == startIndex) {
+                break;
             }
         }
 
         // Si no se encuentra el objetivo
         long endTime = System.nanoTime();
-        long executionTime = endTime - startTime;
-        return new SearchResult(-1, executionTime, iterations);
+        return new SearchResult(-1, endTime - startTime, iterations);
     }
 
-    // Método para calcular la complejidad computacional
-    public double calculateComputationalComplexity(int arrayLength) {
-        // La búsqueda tiene una complejidad de O(n)
-        return arrayLength;
+    // Getter para el tamaño de la tabla
+    public int getTableSize() {
+        return tableSize;
     }
 
-    // Método para imprimir la tabla hash
-    public void printHashTable() {
-        for (int i = 0; i < TABLE_SIZE; i++) {
-            System.out.println("Índice " + i + ": " + hashTable[i]);
+    // Getter para obtener el valor en una posición específica
+    public String getHashTableValue(int index) {
+        if (index < 0 || index >= tableSize) {
+            return "Índice fuera de rango";
         }
+        return hashTable[index] != -1 ? String.valueOf(hashTable[index]) : "VACÍO";
     }
 }
